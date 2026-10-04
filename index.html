@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TSN Chile | Trabajo · Servicios · Negocios</title>
+<meta name="description" content="TSN Chile: trabajo, servicios y negocios para Copiapó, La Serena y el norte de Chile.">
+<style>
+:root{--b:#073b72;--r:#d92d3a;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#667085}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+header{background:#fff;border-bottom:1px solid #e6eaf0;position:sticky;top:0;z-index:5}.wrap{max-width:1080px;margin:auto;padding:16px}
+.brand{font-weight:900;font-size:26px;color:var(--b)}.brand span{color:var(--r)}.tag{color:var(--muted);font-size:14px}
+.hero{padding:34px 0 18px}.eyebrow{font-weight:800;color:var(--b);font-size:13px}.hero h1{font-size:clamp(30px,6vw,52px);line-height:1.02;margin:8px 0}.hero p{font-size:18px;color:var(--muted);max-width:720px}
+.actions,.grid{display:grid;gap:12px}.actions{grid-template-columns:repeat(auto-fit,minmax(145px,1fr));margin:22px 0}.grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card,.ad,.search{background:var(--card);border:1px solid #e4e9f0;border-radius:16px;padding:18px;box-shadow:0 4px 16px #14213d0d}
+.card{cursor:pointer}.card b{display:block;font-size:17px;margin-bottom:5px}.card small{color:var(--muted)}
+.search{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin:18px 0}input,select,button{width:100%;padding:12px;border-radius:10px;border:1px solid #ccd4df;font:inherit}button{background:var(--b);color:#fff;border:0;font-weight:800;cursor:pointer}.secondary{background:#fff;color:var(--b);border:1px solid var(--b)}
+.ad{margin:22px 0;border-style:dashed}.ad h2{margin-top:0}.pill{display:inline-block;background:#eef4ff;color:var(--b);padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800}
+.notice{background:#fff7df;border:1px solid #f2d78b;border-radius:12px;padding:14px;margin:16px 0}footer{padding:30px 0;color:var(--muted);font-size:13px}
+@media(max-width:700px){.search{grid-template-columns:1fr}.wrap{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">TSN <span>CHILE</span></div><div class="tag">Trabajo · Servicios · Negocios</div></div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">COPIAPÓ · LA SERENA · NORTE DE CHILE</div><h1>Encuentra trabajo y servicios cerca de ti</h1><p>Consulta gratis, ofrece tus servicios o publica una necesidad local. Los avisos se revisan antes de mostrarse.</p><button onclick="document.getElementById('publicar').scrollIntoView({behavior:'smooth'})" style="max-width:190px">Publicar gratis</button></section>
+<section class="actions">
+<div class="card"><b>💼 Trabajo</b><small>Busca oportunidades</small></div>
+<div class="card"><b>🛠️ Servicios</b><small>Encuentra profesionales</small></div>
+<div class="card"><b>📣 Necesito servicio</b><small>Publica una necesidad</small></div>
+<div class="card"><b>🏪 Negocios</b><small>Comercio local</small></div>
+<div class="card"><b>📍 Qué hacer</b><small>Panorama local</small></div>
+</section>
+<section class="search"><input placeholder="Buscar"><input placeholder="Comuna o región"><select><option>Todas las modalidades</option><option>Presencial</option><option>Remoto</option><option>Híbrido</option></select></section>
+<section class="ad"><span class="pill">PUBLICIDAD</span><h2>Haz visible tu negocio o servicio</h2><p>Buscar trabajo y publicar avisos básicos seguirá siendo gratuito. TSN Chile ofrecerá opciones comerciales para quienes quieran mayor visibilidad.</p><div class="grid">
+<div class="card"><b>⭐ Destacado 30 días</b><small>Mayor visibilidad para tu aviso.</small></div>
+<div class="card"><b>📢 Publicación patrocinada</b><small>Contenido identificado claramente como patrocinado.</small></div>
+<div class="card"><b>🏢 Plan empresa/profesional</b><small>Presencia reforzada para negocios y prestadores.</small></div>
+<div class="card"><b>📍 Publicidad local</b><small>Espacios para negocios de la zona.</small></div>
+</div></section>
+<section id="publicar"><h2>Publicaciones</h2><div class="notice">Aún no hay avisos publicados aquí. Puedes enviar un aviso gratuito para revisión. No mostramos publicaciones sin aprobar.</div>
+<div class="grid"><div class="card"><b>Mi cuenta</b><small>Gestiona tus datos y publicaciones.</small></div><div class="card"><b>Mi aviso</b><small>Consulta el estado de tus publicaciones.</small></div><div class="card"><b>Administrar</b><small>Panel reservado para revisión y moderación.</small></div></div></section>
+<section><h2>Buscar trabajo en otras plataformas</h2><p>Consulta los avisos originales y postula directamente en su fuente. TSN Chile no presenta estos enlaces como ofertas propias.</p></section>
+<footer>TSN Chile · Gratis para buscar empleo y consultar servicios · Copiapó · La Serena · Norte de Chile</footer>
+</main>
+</body></html>

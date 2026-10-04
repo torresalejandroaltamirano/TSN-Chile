@@ -4,11 +4,11 @@
 <section class="hero"><h1>¿Qué necesitas hoy?</h1><p>Encuentra opciones cerca de ti de forma simple.</p></section>
 <div class="search"><input aria-label="Buscar" placeholder="🔎  ¿Qué estás buscando?"></div>
 <h2 class="title">Elige una opción</h2><section class="menu">
-<div class="item"><div class="icon">💼</div><b>Buscar trabajo</b><small>Ver oportunidades</small></div>
-<div class="item"><div class="icon">🛠️</div><b>Servicios</b><small>Buscar profesionales</small></div>
-<div class="item"><div class="icon">🏪</div><b>Negocios</b><small>Comercio local</small></div>
-<div class="item"><div class="icon">📍</div><b>Panoramas</b><small>Ferias · Eventos · Lugares</small></div>
+<div class="item" data-section="trabajo"><div class="icon">💼</div><b>Buscar trabajo</b><small>Ver oportunidades</small></div>
+<div class="item" data-section="servicios"><div class="icon">🛠️</div><b>Servicios</b><small>Buscar profesionales</small></div>
+<div class="item" data-section="negocios"><div class="icon">🏪</div><b>Negocios</b><small>Comercio local</small></div>
+<div class="item" data-section="panoramas"><div class="icon">📍</div><b>Panoramas</b><small>Ferias · Eventos · Lugares</small></div>
 </section>
-<button class="publish">＋ Publicar gratis</button>
+<button class="publish" data-section="publicar">＋ Publicar gratis</button>
 <section class="more"><details><summary>Necesito un servicio</summary><p>Publica lo que necesitas para que profesionales y prestadores puedan encontrar tu solicitud.</p></details><details><summary>Mi cuenta y mis avisos</summary><p>Gestiona tus datos y consulta el estado de tus publicaciones.</p></details><details><summary>Promocionar mi negocio <span class="red">★</span></summary><p>Opciones de mayor visibilidad: destacados de 30 días, publicaciones patrocinadas y espacios para negocios. Los avisos básicos continúan gratuitos.</p></details></section>
-<footer>TSN Chile · Copiapó · La Serena · Norte de Chile</footer></main></body></html>
+<section id="panel" style="display:none;background:#fff;border-radius:16px;padding:20px;margin:20px 0;box-shadow:0 5px 16px #062b521a"></section><footer>TSN Chile · Copiapó · La Serena · Norte de Chile</footer></main><script>const info={trabajo:["💼 Buscar trabajo","Aquí aparecerán oportunidades laborales y ferias de empleo."],servicios:["🛠️ Servicios","Aquí podrás encontrar profesionales y prestadores de servicios."],negocios:["🏪 Negocios","Comercios, emprendedores y artesanos podrán mostrar su actividad. TSN Chile no procesa compras ni pagos."],panoramas:["📍 Panoramas","Ferias, eventos y lugares de interés de tu zona."],publicar:["＋ Publicar gratis","Aquí podrás enviar un aviso básico para revisión antes de publicarse."]};document.querySelectorAll("[data-section]").forEach(function(el){el.addEventListener("click",function(){const d=info[this.dataset.section],p=document.getElementById("panel");p.innerHTML="<h2 style=\"margin-top:0;color:#062b52\">"+d[0]+"</h2><p style=\"color:#697586;line-height:1.5\">"+d[1]+"</p><button id=\"cerrar\" style=\"border:0;background:#062b52;color:#fff;padding:11px 18px;border-radius:10px;font-weight:700\">Volver</button>";p.style.display="block";p.scrollIntoView({behavior:"smooth"});document.getElementById("cerrar").onclick=function(){p.style.display="none";window.scrollTo({top:0,behavior:"smooth"})}})});</script></body></html>

@@ -1,0 +1,59 @@
+name: TSN Chile - Control diario de contenido
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 10:15 UTC = 07:15 en Chile continental durante horario de verano.
+    - cron: "15 10 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  verificar-contenido:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprobar ofertas y panoramas vigentes
+        shell: bash
+        env:
+          SUPABASE_URL: https://osognidheouthkubxbev.supabase.co
+          SUPABASE_KEY: sb_publishable_BtlJGEyExRA_bPmDQ1RFIg_-KbBTnrQ
+        run: |
+          set -euo pipefail
+          HOY="$(date -u +%F)"
+          AHORA="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          ofertas=$(curl --fail --silent --show-error \
+            -H "apikey: $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/ofertas_laborales?select=id,cargo,fecha_cierre&activa=eq.true&fecha_cierre=lt.$HOY")
+
+          panoramas=$(curl --fail --silent --show-error \
+            -H "apikey: $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/panoramas?select=id,titulo,fecha_fin&activo=eq.true&fecha_fin=lt.$AHORA")
+
+          python3 - "$ofertas" "$panoramas" <<'PY'
+          import json, sys
+          ofertas=json.loads(sys.argv[1])
+          panoramas=json.loads(sys.argv[2])
+          print(f"Ofertas vencidas todavía activas: {len(ofertas)}")
+          print(f"Panoramas vencidos todavía activos: {len(panoramas)}")
+          if ofertas or panoramas:
+              print("AVISO: hay contenido vencido marcado como activo en Supabase.")
+              sys.exit(1)
+          print("OK: no hay contenido vencido marcado como activo.")
+          PY
+
+      - name: Confirmar que las consultas públicas siguen disponibles
+        shell: bash
+        env:
+          SUPABASE_URL: https://osognidheouthkubxbev.supabase.co
+          SUPABASE_KEY: sb_publishable_BtlJGEyExRA_bPmDQ1RFIg_-KbBTnrQ
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            -H "apikey: $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/ofertas_laborales?select=id&activa=eq.true&limit=1" >/dev/null
+          curl --fail --silent --show-error \
+            -H "apikey: $SUPABASE_KEY" \
+            "$SUPABASE_URL/rest/v1/panoramas?select=id&activo=eq.true&limit=1" >/dev/null
+          echo "OK: Supabase responde correctamente."

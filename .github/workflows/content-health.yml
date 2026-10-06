@@ -2,6 +2,9 @@ name: TSN Chile - Control diario de contenido
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/content-health.yml"
   schedule:
     # 10:15 UTC = 07:15 en Chile continental durante horario de verano.
     - cron: "15 10 * * *"

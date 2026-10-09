@@ -1,0 +1,36 @@
+name: Android APK de prueba
+on:
+  workflow_dispatch:
+  push:
+    branches: [cierre-tsn-1.0]
+    paths:
+      - 'app/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle/**'
+      - '.github/workflows/android-debug.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Instalar Android SDK 36
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Preparar Gradle 8.11.1
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.11.1-bin.zip
+          unzip -q gradle-8.11.1-bin.zip
+      - name: Compilar APK debug
+        run: ./gradle-8.11.1/bin/gradle --no-daemon :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TSN-Chile-APK-Prueba
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

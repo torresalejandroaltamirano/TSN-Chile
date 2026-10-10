@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp" android:height="108dp"
-    android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#092C50" android:pathData="M0,0h108v108h-108z"/>
-    <path android:fillColor="#FFFFFF" android:pathData="M16,33h25v7h-9v33h-7v-33h-9z M44,33h7v40h-7z M44,33h24v7h-24z M44,49h24v7h-24z M61,56h7v17h-7z M44,66h24v7h-24z M72,33h7v40h-7z M93,33h7v40h-7z M72,33h7l21,40h-7z"/>
-    <path android:fillColor="#D52C3D" android:pathData="M22,81h64v5h-64z"/>
+ android:width="108dp" android:height="108dp"
+ android:viewportWidth="108" android:viewportHeight="108">
+ <path android:fillColor="#092C50" android:pathData="M0,0h108v108h-108z"/>
+ <!-- T -->
+ <path android:fillColor="#FFFFFF" android:pathData="M12,34h26v9h-8v32h-10v-32h-8z"/>
+ <!-- S: three horizontal strokes joined at alternating ends -->
+ <path android:fillColor="#FFFFFF" android:pathData="M42,34h25v9h-25z M42,34h9v22h-9z M42,49h25v9h-25z M58,49h9v26h-9z M42,66h25v9h-25z"/>
+ <!-- N: two stems with diagonal connector -->
+ <path android:fillColor="#FFFFFF" android:pathData="M72,34h9v41h-9z M91,34h9v41h-9z M80,34l20,41h-10l-18,-37z"/>
+ <path android:fillColor="#D52C3D" android:pathData="M19,83h70v5h-70z"/>
 </vector>

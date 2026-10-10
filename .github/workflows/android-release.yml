@@ -17,7 +17,7 @@ jobs:
       - name: Verificar secretos de firma
         env:
           TSN_KEYSTORE_BASE64: ${{ secrets.TSN_KEYSTORE_BASE64 }}
-          TSN_STORE_PASSWORD: ${{ secrets.TSN_STORE_PASSWORD }}
+          TSN_STORE_PASSWORD: ${{ secrets.TSN_KEYSTORE_PASSWORD }}
           TSN_KEY_ALIAS: ${{ secrets.TSN_KEY_ALIAS }}
           TSN_KEY_PASSWORD: ${{ secrets.TSN_KEY_PASSWORD }}
         run: |
@@ -38,7 +38,7 @@ jobs:
           unzip -q gradle-8.11.1-bin.zip
       - name: Compilar APK y AAB release
         env:
-          TSN_STORE_PASSWORD: ${{ secrets.TSN_STORE_PASSWORD }}
+          TSN_STORE_PASSWORD: ${{ secrets.TSN_KEYSTORE_PASSWORD }}
           TSN_KEY_ALIAS: ${{ secrets.TSN_KEY_ALIAS }}
           TSN_KEY_PASSWORD: ${{ secrets.TSN_KEY_PASSWORD }}
         run: ./gradle-8.11.1/bin/gradle --no-daemon :app:assembleRelease :app:bundleRelease

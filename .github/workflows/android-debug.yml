@@ -35,10 +35,17 @@ jobs:
           APK=app/build/outputs/apk/debug/app-debug.apk
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
-      - name: Verificar estructura APK
+      - name: Verificar identidad e icono Android
         run: |
+          set -euo pipefail
           APK=app/build/outputs/apk/debug/app-debug.apk
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | head -25
+          BADGING=$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")
+          printf '%s\n' "$BADGING" | head -25
+          printf '%s\n' "$BADGING" | grep -q "package: name='cl.tsnchile.app'"
+          printf '%s\n' "$BADGING" | grep -q "application-label:'TSN Chile'"
+          printf '%s\n' "$BADGING" | grep -q "application-icon-"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" list "$APK" | grep -q 'res/drawable/tsn_launcher'
+          test "$(stat -c%s "$APK")" -gt 8000
       - uses: actions/upload-artifact@v4
         with:
           name: TSN-Chile-APK-Prueba

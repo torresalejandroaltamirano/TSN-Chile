@@ -20,9 +20,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - name: Instalar Android SDK 36
-        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'platforms;android-36' 'build-tools;35.0.0'
       - name: Preparar Gradle 8.11.1
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.11.1-bin.zip

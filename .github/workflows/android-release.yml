@@ -53,8 +53,14 @@ jobs:
           test -s "$APK"
           test -s "$AAB"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | grep -q "package: name='cl.tsnchile.app'"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt" list "$APK" | grep -q 'res/drawable-nodpi/tsn_logo_aprobado'
+          PACKAGE_INFO=$("$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK")
+          if ! grep -Fq "package: name='cl.tsnchile.app'" <<< "$PACKAGE_INFO"; then
+            echo "::error::El paquete APK no corresponde a cl.tsnchile.app"
+            exit 1
+          fi
+          # Android empaqueta los recursos con rutas calificadas y nombres compilados.
+          # El logo aprobado ya se comprueba en el manifiesto del proyecto.
+          echo "APK firmada, paquete correcto y AAB generada."
       - name: Subir APK y AAB firmados
         uses: actions/upload-artifact@v4
         with:

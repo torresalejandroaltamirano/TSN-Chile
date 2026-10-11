@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Recuperar contraseña · TSN Chile</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Arial,sans-serif;color:#062b52;background:#dbe8f4;min-height:100vh}
+header{background:#fff;padding:18px 22px;border-bottom:1px solid #ccd6e2;font-weight:800;font-size:21px}
+main{width:min(560px,calc(100% - 32px));margin:38px auto;background:white;padding:28px 24px;border-radius:22px;box-shadow:0 8px 24px #062b5212}
+h1{font-size:25px;margin:0 0 16px}p{line-height:1.55;color:#64748b}label{display:block;font-weight:700;margin:20px 0 8px}
+input{display:block;width:100%;font:inherit;padding:15px;border:1px solid #bdc9d6;border-radius:12px}
+button{display:block;width:100%;background:#062b52;color:#fff;border:0;border-radius:12px;font:inherit;font-weight:750;padding:15px;margin-top:20px;cursor:pointer}
+button:disabled{opacity:.55}a{color:#062b52}#status{min-height:36px;font-weight:600}form[hidden]{display:none}
+</style>
+</head>
+<body>
+<header>TSN <span style="color:#cf2b43">CHILE</span></header>
+<main>
+<a href="./">← Volver a TSN Chile</a>
+<h1>Recuperar contraseña</h1>
+<form id="request">
+<p>Introduce el correo de tu cuenta administradora. Si existe, recibirás instrucciones para restablecer tu contraseña.</p>
+<label for="email">Correo electrónico</label>
+<input id="email" type="email" autocomplete="email" required>
+<button type="submit">Enviar enlace de recuperación</button>
+</form>
+<form id="reset" hidden>
+<p>Escribe tu nueva contraseña para la cuenta de TSN Chile.</p>
+<label for="password">Nueva contraseña</label>
+<input id="password" type="password" autocomplete="new-password" minlength="8" required>
+<label for="confirm">Confirmar contraseña</label>
+<input id="confirm" type="password" autocomplete="new-password" minlength="8" required>
+<button type="submit">Guardar nueva contraseña</button>
+</form>
+<p id="status" role="status" aria-live="polite"></p>
+</main>
+<script>
+"use strict";
+const BASE="https://osognidheouthkubxbev.supabase.co/auth/v1/";
+const KEY="sb_publishable_BtlJGEyExRA_bPmDQ1RFIg_-KbBTnrQ";
+const status=document.getElementById("status");
+const request=document.getElementById("request");
+const reset=document.getElementById("reset");
+const hash=new URLSearchParams(location.hash.slice(1));
+const query=new URLSearchParams(location.search);
+const token=hash.get("access_token");
+const recoveryToken=hash.get("type")==="recovery" && token;
+const code=query.get("code");
+let accessToken=null;
+const headers={"apikey":KEY,"Content-Type":"application/json"};
+async function call(path,body,extraHeaders={}){
+  const response=await fetch(BASE+path,{method:"POST",headers:{...headers,...extraHeaders},body:JSON.stringify(body)});
+  if(!response.ok)throw new Error("No se pudo completar la operación");
+  return response;
+}
+async function loadRecovery(){
+  if(recoveryToken){
+    accessToken=token;
+    history.replaceState(null,"",location.pathname);
+    request.hidden=true;
+    reset.hidden=false;
+    status.textContent="Enlace recibido. Crea una contraseña nueva.";
+  }else if(hash.get("error")||query.get("error")){
+    history.replaceState(null,"",location.pathname);
+    status.textContent="El enlace no es válido o expiró. Solicita uno nuevo.";
+  }else if(code){
+    try{
+      const response=await call("token?grant_type=pkce",{auth_code:code,code_verifier:sessionStorage.getItem("tsn_recovery_verifier")||""});
+      const data=await response.json();
+      if(!data.access_token)throw Error("No hay sesión");
+      accessToken=data.access_token;
+      history.replaceState(null,"",location.pathname);
+      request.hidden=true;reset.hidden=false;status.textContent="Enlace recibido. Crea una contraseña nueva.";
+    }catch(e){history.replaceState(null,"",location.pathname);status.textContent="No se pudo validar este enlace. Solicita uno nuevo.";}
+  }
+}
+request.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const btn=request.querySelector("button");btn.disabled=true;
+ status.textContent="Solicitando correo…";
+ try {
+  const redirectTo=new URL("recuperar.html",location.href).origin+new URL("recuperar.html",location.href).pathname;
+  await call("recover?redirect_to="+encodeURIComponent(redirectTo),{email:document.getElementById("email").value.trim()});
+  status.textContent="Si el correo está registrado, recibirás un mensaje con instrucciones. Revisa también Spam.";
+ }catch(e){status.textContent="No se pudo solicitar la recuperación. Intenta más tarde.";}
+ finally{btn.disabled=false;}
+});
+reset.addEventListener("submit",async e=>{
+ e.preventDefault();
+ const p=document.getElementById("password").value;
+ if(p!==document.getElementById("confirm").value){status.textContent="Las contraseñas no coinciden.";return;}
+ if(!accessToken){status.textContent="El enlace expiró. Solicita uno nuevo.";return;}
+ const btn=reset.querySelector("button");btn.disabled=true;
+ try{
+  const response=await fetch(BASE+"user",{method:"PUT",headers:{...headers,"Authorization":"Bearer "+accessToken},body:JSON.stringify({password:p})});
+  if(!response.ok)throw new Error("No se pudo actualizar");
+  accessToken=null;reset.hidden=true;request.hidden=false;request.reset();
+  status.textContent="Contraseña actualizada. Vuelve a Administración e ingresa con tu nueva contraseña.";
+ }catch(e){status.textContent="No se pudo actualizar la contraseña. Puede que el enlace haya expirado.";}
+ finally{btn.disabled=false;}
+});
+loadRecovery();
+</script>
+</body>
+</html>

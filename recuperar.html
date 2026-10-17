@@ -54,7 +54,7 @@ let accessToken=null;
 const headers={"apikey":KEY,"Content-Type":"application/json"};
 async function call(path,body,extraHeaders={}){
   const response=await fetch(BASE+path,{method:"POST",headers:{...headers,...extraHeaders},body:JSON.stringify(body)});
-  if(!response.ok)throw new Error("No se pudo completar la operación");
+  if(!response.ok){const error=new Error("No se pudo completar la operación");error.status=response.status;throw error;}
   return response;
 }
 async function loadRecovery(){
@@ -97,7 +97,7 @@ request.addEventListener("submit",async e=>{
   const redirectTo=new URL("recuperar.html",location.href).origin+new URL("recuperar.html",location.href).pathname;
   await call("recover?redirect_to="+encodeURIComponent(redirectTo),{email:document.getElementById("email").value.trim()});
   status.textContent="Si el correo está registrado, recibirás un mensaje con instrucciones. Revisa también Spam.";
- }catch(e){status.textContent="No se pudo solicitar la recuperación. Intenta más tarde.";}
+ }catch(e){status.textContent=e.status===429?"Se alcanzó el límite temporal de correos. No pulses de nuevo. Revisa los mensajes anteriores en Hotmail o espera antes de solicitar otro enlace.":"No se pudo solicitar la recuperación. Comprueba tu conexión e intenta más tarde.";}
  finally{btn.disabled=false;}
 });
 reset.addEventListener("submit",async e=>{

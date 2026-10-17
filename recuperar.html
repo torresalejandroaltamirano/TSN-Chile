@@ -48,6 +48,8 @@ const query=new URLSearchParams(location.search);
 const token=hash.get("access_token");
 const recoveryToken=hash.get("type")==="recovery" && token;
 const code=query.get("code");
+const tokenHash=query.get("token_hash");
+const tokenType=query.get("type");
 let accessToken=null;
 const headers={"apikey":KEY,"Content-Type":"application/json"};
 async function call(path,body,extraHeaders={}){
@@ -65,9 +67,20 @@ async function loadRecovery(){
   }else if(hash.get("error")||query.get("error")){
     history.replaceState(null,"",location.pathname);
     status.textContent="El enlace no es válido o expiró. Solicita uno nuevo.";
+  }else if(tokenHash && tokenType==="recovery"){
+    try{
+      const response=await call("verify",{token_hash:tokenHash,type:"recovery"});
+      const data=await response.json();
+      if(!data.access_token)throw Error("No hay sesión");
+      accessToken=data.access_token;
+      history.replaceState(null,"",location.pathname);
+      request.hidden=true;reset.hidden=false;status.textContent="Enlace verificado. Crea una contraseña nueva.";
+    }catch(e){history.replaceState(null,"",location.pathname);status.textContent="No se pudo verificar este enlace. Solicita uno nuevo.";}
   }else if(code){
     try{
-      const response=await call("token?grant_type=pkce",{auth_code:code,code_verifier:sessionStorage.getItem("tsn_recovery_verifier")||""});
+      const verifier=sessionStorage.getItem("tsn_recovery_verifier");
+      if(!verifier)throw Error("Falta verificador PKCE");
+      const response=await call("token?grant_type=pkce",{auth_code:code,code_verifier:verifier});
       const data=await response.json();
       if(!data.access_token)throw Error("No hay sesión");
       accessToken=data.access_token;

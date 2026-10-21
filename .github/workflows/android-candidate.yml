@@ -1,0 +1,51 @@
+name: TSN candidato Android sin firma
+on:
+  workflow_dispatch:
+  push:
+    branches: [cierre-tsn-1.0]
+    paths: ['.github/workflows/android-candidate.yml']
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Preparar compilación sin credenciales
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('app/build.gradle.kts')
+          source = p.read_text()
+          old = 'signingConfig = signingConfigs.getByName("production")'
+          assert source.count(old) == 1
+          p.write_text(source.replace(old, 'signingConfig = null'))
+          PY
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'platforms;android-36' 'build-tools;35.0.0'
+          wget -q https://services.gradle.org/distributions/gradle-8.11.1-bin.zip
+          unzip -q gradle-8.11.1-bin.zip
+      - name: Compilar candidatos APK y AAB
+        run: ./gradle-8.11.1/bin/gradle --no-daemon :app:assembleRelease :app:bundleRelease
+      - name: Comprobar paquete y conservar evidencia
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release-unsigned.apk
+          test -s "$APK"
+          test -s app/build/outputs/bundle/release/app-release.aab
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" > package-badging.txt
+          grep -q "package: name='cl.tsnchile.app'" package-badging.txt
+          echo 'Candidatos SIN FIRMA: requieren firma original y prueba en Android antes de publicar.' > ESTADO.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TSN-Chile-Candidato-SIN-FIRMA
+          path: |
+            app/build/outputs/apk/release/app-release-unsigned.apk
+            app/build/outputs/bundle/release/app-release.aab
+            package-badging.txt
+            ESTADO.txt
+          if-no-files-found: error
+          retention-days: 30

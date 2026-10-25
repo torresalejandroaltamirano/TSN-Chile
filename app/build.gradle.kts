@@ -8,8 +8,8 @@ android {
         applicationId = "cl.tsnchile.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     signingConfigs {
@@ -38,4 +38,10 @@ android {
             signingConfig = signingConfigs.getByName("production")
         }
     }
+}
+
+// Keep release ads in test mode until Android and consent validation passes.
+dependencies {
+    implementation("com.google.android.gms:play-services-ads:24.7.0")
+    implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 }

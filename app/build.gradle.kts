@@ -35,7 +35,7 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("production")
+            signingConfig = if (System.getenv("TSN_UNSIGNED") == "1") null else signingConfigs.getByName("production")
         }
     }
 }

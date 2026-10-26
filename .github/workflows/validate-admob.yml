@@ -27,3 +27,36 @@ jobs:
         with:
           name: TSN-1.0.1-test-ads-debug
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Build signed test update
+        if: github.event_name == 'push'
+        env:
+          TSN_KEYSTORE_BASE64: ${{ secrets.TSN_KEYSTORE_BASE64 }}
+          TSN_STORE_PASSWORD: ${{ secrets.TSN_KEYSTORE_PASSWORD }}
+          TSN_KEY_ALIAS: ${{ secrets.TSN_KEY_ALIAS }}
+          TSN_KEY_PASSWORD: ${{ secrets.TSN_KEY_PASSWORD }}
+        shell: bash
+        run: |
+          set -eu
+          if [ -z "$TSN_KEYSTORE_BASE64" ] || [ -z "$TSN_STORE_PASSWORD" ] || [ -z "$TSN_KEY_ALIAS" ] || [ -z "$TSN_KEY_PASSWORD" ]; then
+            echo "Required signing secrets are not available to this workflow."
+            exit 1
+          fi
+          export TSN_KEYSTORE_PATH="$RUNNER_TEMP/tsn-upload.jks"
+          umask 077
+          printf '%s' "$TSN_KEYSTORE_BASE64" | base64 --decode > "$TSN_KEYSTORE_PATH"
+          actual="$(keytool -list -v -keystore "$TSN_KEYSTORE_PATH" -storepass:env TSN_STORE_PASSWORD -alias "$TSN_KEY_ALIAS" | sed -n 's/.*SHA256: //p' | head -1)"
+          expected="B0:55:A6:B5:AC:92:57:B1:06:FC:EC:3D:29:4E:B9:61:C7:8B:95:03:1F:66:01:D1:EA:2D:E7:8B:6C:87:E4:F0"
+          test "$actual" = "$expected" || { echo "Signing certificate does not match TSN 1.0.0."; exit 1; }
+          gradle :app:assembleRelease :app:bundleRelease --no-daemon
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --print-certs app/build/outputs/apk/release/*.apk | grep -qi "b055a6b5ac9257b106fcec3d294eb961c78b95031f6601d1ea2de78b6c87e4f0"
+          rm -f "$TSN_KEYSTORE_PATH"
+      - name: Upload signed test artifacts
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: TSN-1.0.1-signed-test-ads
+          path: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error

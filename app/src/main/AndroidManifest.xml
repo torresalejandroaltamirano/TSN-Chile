@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 <uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 <application android:theme="@style/AppTheme" android:label="TSN Chile" android:icon="@drawable/tsn_logo_aprobado" android:roundIcon="@drawable/tsn_logo_aprobado" android:usesCleartextTraffic="false">
+<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-2369519530952827~2575226200"/>
 <activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity>
 </application></manifest>
